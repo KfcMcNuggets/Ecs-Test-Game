@@ -3,19 +3,33 @@ using UnityEngine;
 
 sealed class EcsStartup : MonoBehaviour
 {
-    EcsWorld _world;
-    EcsSystems _systems;
+    private StaticData staticData;
+
+    EcsWorld world;
+    EcsSystems InitSystems,
+        UpdateSystems,
+        FixedUpdateSystems;
 
     void Start()
     {
-        _world = new EcsWorld();
-        _systems = new EcsSystems(_world);
+        staticData = GetComponent<StaticData>();
+        world = new EcsWorld();
+        InitSystems = new EcsSystems(world);
+        UpdateSystems = new EcsSystems(world);
+        FixedUpdateSystems = new EcsSystems(world);
 #if UNITY_EDITOR
-        Leopotam.Ecs.UnityIntegration.EcsWorldObserver.Create(_world);
-        Leopotam.Ecs.UnityIntegration.EcsSystemsObserver.Create(_systems);
+        Leopotam.Ecs.UnityIntegration.EcsWorldObserver.Create(world);
+        Leopotam.Ecs.UnityIntegration.EcsSystemsObserver.Create(InitSystems);
+        Leopotam.Ecs.UnityIntegration.EcsSystemsObserver.Create(UpdateSystems);
+        Leopotam.Ecs.UnityIntegration.EcsSystemsObserver.Create(FixedUpdateSystems);
 #endif
-        _systems
-        // register your systems here, for example:
+        InitSystems.Add(new CardsInit()).Inject(staticData).Init();
+
+        UpdateSystems.Add(new MouseClick()).Add(new SceneControl()).Inject(staticData).Init();
+
+        FixedUpdateSystems.Add(new CardRotator()).Add(new CardMoving()).Inject(staticData).Init();
+
+        //UpdateSystems
         // .Add (new TestSystem1 ())
         // .Add (new TestSystem2 ())
 
@@ -26,22 +40,41 @@ sealed class EcsStartup : MonoBehaviour
         // inject service instances here (order doesn't important), for example:
         // .Inject (new CameraService ())
         // .Inject (new NavMeshSupport ())
-        .Init();
+        //.Init();
     }
 
     void Update()
     {
-        _systems?.Run();
+        UpdateSystems?.Run();
+    }
+
+    private void FixedUpdate()
+    {
+        FixedUpdateSystems?.Run();
     }
 
     void OnDestroy()
     {
-        if (_systems != null)
+        if (UpdateSystems != null)
         {
-            _systems.Destroy();
-            _systems = null;
-            _world.Destroy();
-            _world = null;
+            UpdateSystems.Destroy();
+            UpdateSystems = null;
+        }
+        if (FixedUpdateSystems != null)
+        {
+            FixedUpdateSystems.Destroy();
+            FixedUpdateSystems = null;
+        }
+
+        if (InitSystems != null)
+        {
+            InitSystems.Destroy();
+            InitSystems = null;
+        }
+        if (world != null)
+        {
+            world.Destroy();
+            world = null;
         }
     }
 }
