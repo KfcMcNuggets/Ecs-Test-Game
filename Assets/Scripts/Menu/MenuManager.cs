@@ -50,6 +50,12 @@ public class MenuManager : MonoBehaviour
         changeSoundAnim;
     private bool startGame;
 
+    private void Awake()
+    {
+        Application.targetFrameRate = 300;
+        Screen.orientation = ScreenOrientation.LandscapeLeft;
+    }
+
     private void Start()
     {
         okBtn.SetActive(false);
