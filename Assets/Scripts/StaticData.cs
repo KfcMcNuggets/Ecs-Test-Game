@@ -4,32 +4,24 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using Leopotam.Ecs;
 using UnityEngine.UI;
+using TMPro;
 
 public class StaticData : MonoBehaviour
 {
     [SerializeField]
-    public Vector2[] positions;
+    public Vector3[] positions;
 
     [SerializeField]
-    public RectTransform[] cards;
+    public Transform[] cards;
 
     [SerializeField]
     public EventSystem EventSystem;
 
     [SerializeField]
-    public GraphicRaycaster graphicRaycaster;
-
-    [SerializeField]
-    public Sprite shirt;
-
-    [SerializeField]
-    public Sprite[] face;
+    public TextMeshProUGUI bestScore,
+        currentScore,
+        header;
 
     public int RemixCounts;
     public int MaxCounts;
-
-    public void ShufflePositions()
-    {
-        positions.Shuffle();
-    }
 }

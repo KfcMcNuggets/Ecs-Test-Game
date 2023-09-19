@@ -10,7 +10,7 @@ sealed class EcsStartup : MonoBehaviour
         UpdateSystems,
         FixedUpdateSystems;
 
-    void Start()
+    public void StartGame()
     {
         staticData = GetComponent<StaticData>();
         world = new EcsWorld();
@@ -25,7 +25,13 @@ sealed class EcsStartup : MonoBehaviour
 #endif
         InitSystems.Add(new CardsInit()).Inject(staticData).Init();
 
-        UpdateSystems.Add(new MouseClick()).Inject(staticData).Init();
+        UpdateSystems
+            .Add(new MouseClick())
+            .Add(new ScoreUpdater())
+            .Add(new HeaderUpdater())
+            .OneFrame<UpdateScoresMarker>()
+            .Inject(staticData)
+            .Init();
 
         FixedUpdateSystems.Add(new CardRotator()).Add(new CardMoving()).Inject(staticData).Init();
 
