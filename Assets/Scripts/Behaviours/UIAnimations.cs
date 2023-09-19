@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 public class UIAnimations : MonoBehaviour
 {
     private const float AnimLength = 0.3f;
+    private bool gameEnd;
 
     [SerializeField]
     private RectTransform header,
@@ -66,19 +67,23 @@ public class UIAnimations : MonoBehaviour
 
     private void OnGameEnd()
     {
-        endGameAnim.Restart();
+        if (!gameEnd)
+        {
+            gameEnd = true;
+            endGameAnim.Restart();
+        }
     }
 
     public void GoToMenu()
     {
-        endSceneAnim.Restart();
         SceneName = "Menu";
+        endSceneAnim.Restart();
     }
 
     public void Restart()
     {
-        endSceneAnim.Restart();
         SceneName = "Game";
+        endSceneAnim.Restart();
     }
 
     public void Exit()

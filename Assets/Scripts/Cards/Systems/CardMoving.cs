@@ -16,7 +16,6 @@ sealed class CardMoving : IEcsRunSystem, IEcsInitSystem
     {
         if (!movementFilter.IsEmpty())
         {
-            Debug.Log($"we have {movementFilter.GetEntitiesCount()} MovementSpeed, moving card ");
             MoveCard();
         }
         else if (
@@ -24,7 +23,6 @@ sealed class CardMoving : IEcsRunSystem, IEcsInitSystem
             && finishedFilter.GetEntitiesCount() == remixingFilter.GetEntitiesCount()
         )
         {
-            Debug.Log("CheckingRemix");
             CheckRemix();
         }
     }
@@ -44,12 +42,9 @@ sealed class CardMoving : IEcsRunSystem, IEcsInitSystem
                 cardEntity.Del<RemixingCard>();
                 cardEntity.Del<FinishedMoving>();
                 cardEntity.Get<ClosedToChooseCard>();
-                Debug.Log($"EndRemix {cardComp.CurrentMixes}/{cardComp.MaxRemixes}");
             }
             else
             {
-                Debug.Log($"RemixAgain {cardComp.CurrentMixes}/{cardComp.MaxRemixes}");
-
                 cardEntity.Del<FinishedMoving>();
                 cardEntity.Get<Movement>();
             }

@@ -62,7 +62,6 @@ sealed class CardRotator : IEcsRunSystem, IEcsInitSystem
                 && objTransform.eulerAngles.y <= body.FinalYAngle + 5
             )
             {
-                Debug.Log("finished");
                 objTransform.eulerAngles = new Vector3(0, body.FinalYAngle, 0);
                 card.Del<RotationSpeed>();
                 if (card.Has<ClosingCard>())
