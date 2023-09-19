@@ -1051,6 +1051,8 @@ MonoBehaviour:
   bestScore: {fileID: 920016189}
   currentScore: {fileID: 937295660}
   header: {fileID: 510038497}
+  rotateSound: {fileID: 8300000, guid: 20c19b225493a884592ff096467c62a2, type: 3}
+  winSound: {fileID: 8300000, guid: 6d05df3c6bcf2c4468f50eae9a616ea7, type: 3}
   RemixCounts: 0
   MaxCounts: 1
 --- !u!114 &545000419

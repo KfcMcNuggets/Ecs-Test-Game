@@ -69,6 +69,10 @@ public class UIAnimations : MonoBehaviour
     {
         if (!gameEnd)
         {
+            if (PlayerPrefs.GetInt("Vibro", 1) == 1)
+            {
+                Handheld.Vibrate();
+            }
             gameEnd = true;
             endGameAnim.Restart();
         }

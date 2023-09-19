@@ -83,9 +83,17 @@ sealed class MouseClick : IEcsRunSystem, IEcsInitSystem
 
     private void CheckCorrectOpen()
     {
+        if (PlayerPrefs.GetInt("Sound", 1) == 1)
+        {
+            AudioSource.PlayClipAtPoint(staticData.rotateSound, Vector3.zero, 1);
+        }
         if (hit.collider.gameObject == correctCardGO)
         {
             scoreUpdaterFilter.GetEntity(0).Get<UpdateScoresMarker>();
+            if (PlayerPrefs.GetInt("Sound", 1) == 1)
+            {
+                AudioSource.PlayClipAtPoint(staticData.winSound, Vector3.zero, 1);
+            }
         }
         else
         {

@@ -22,6 +22,10 @@ public class StaticData : MonoBehaviour
         currentScore,
         header;
 
+    [SerializeField]
+    public AudioClip rotateSound,
+        winSound;
+
     public int RemixCounts;
     public int MaxCounts;
 }
