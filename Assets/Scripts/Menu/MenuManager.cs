@@ -1,21 +1,27 @@
 ﻿using System.Collections;
 using UnityEngine;
+using DG.Tweening;
 
-namespace Assets.Scripts.Menu
+public class MenuManager : MonoBehaviour
 {
-    public class MenuManager : MonoBehaviour
-    {
+    [SerializeField]
+    private RectTransform startBtn,
+        settingsBtn,
+        soundBtn,
+        vibroBtn,
+        topChip,
+        leftChip,
+        rightChip;
 
-        // Use this for initialization
-        void Start()
-        {
+    [SerializeField]
+    private Sprite soundOnSprite,
+        soundOfSprite;
 
-        }
+    private void Start() { }
 
-        // Update is called once per frame
-        void Update()
-        {
-
-        }
-    }
+    private Sequence openSceneAnim,
+        closeSceneAnim,
+        showSettingsAnim,
+        changeVibroAnim,
+        changeSoundAnim;
 }

@@ -324,7 +324,7 @@ GameObject:
   - component: {fileID: 421627558}
   - component: {fileID: 421627557}
   m_Layer: 5
-  m_Name: Image (1)
+  m_Name: RightChip
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -704,7 +704,7 @@ GameObject:
   - component: {fileID: 1623370108}
   - component: {fileID: 1623370107}
   m_Layer: 5
-  m_Name: Image
+  m_Name: TopChip
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -780,7 +780,7 @@ GameObject:
   - component: {fileID: 1714436650}
   - component: {fileID: 1714436649}
   m_Layer: 5
-  m_Name: Image (2)
+  m_Name: LeftChip
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
