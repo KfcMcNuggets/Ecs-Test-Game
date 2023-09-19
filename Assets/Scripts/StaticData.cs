@@ -19,6 +19,12 @@ public class StaticData : MonoBehaviour
     [SerializeField]
     public GraphicRaycaster graphicRaycaster;
 
+    [SerializeField]
+    public Sprite shirt;
+
+    [SerializeField]
+    public Sprite[] face;
+
     public int RemixCounts;
     public int MaxCounts;
 
@@ -26,16 +32,4 @@ public class StaticData : MonoBehaviour
     {
         positions.Shuffle();
     }
-
-    public enum CardsState
-    {
-        Opening,
-        Open,
-        Closing,
-        ClosedToRemix,
-        Remixing,
-        ClosedToChoose
-    }
-
-    public CardsState CurrentState;
 }

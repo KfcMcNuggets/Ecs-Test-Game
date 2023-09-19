@@ -4,8 +4,9 @@ using UnityEngine;
 sealed class CardRotator : IEcsRunSystem, IEcsInitSystem
 {
     private EcsWorld world = null;
-    private EcsFilter<RotationSpeed> filter;
-    private EcsFilter<FinishedRotatingMarker> marker;
+    private EcsFilter<RotationSpeed> rotationFilter;
+    private EcsFilter<ClosedToRemixCard> closedFilter;
+    private EcsFilter<Card> cardFilter;
     private StaticData staticData;
     private Vector3 rotateAngle;
 
@@ -16,25 +17,34 @@ sealed class CardRotator : IEcsRunSystem, IEcsInitSystem
 
     void IEcsRunSystem.Run()
     {
-        if (
-            (
-                staticData.CurrentState == StaticData.CardsState.Opening
-                || staticData.CurrentState == StaticData.CardsState.Closing
-            ) && filter.IsEmpty()
-        )
+        if (!rotationFilter.IsEmpty())
         {
-            staticData.CurrentState = staticData.CurrentState + 1;
-            foreach (int i in marker)
-            {
-                ref EcsEntity card = ref marker.GetEntity(i);
-                card.Del<FinishedRotatingMarker>();
-            }
+            RotateCards();
         }
-
-        foreach (int i in filter)
+        if (closedFilter.GetEntitiesCount() == cardFilter.GetEntitiesCount())
         {
-            ref EcsEntity card = ref filter.GetEntity(i);
-            float speed = filter.Get1(i).Speed;
+            MarkCardsToRemix();
+        }
+    }
+
+    private void MarkCardsToRemix()
+    {
+        foreach (int i in closedFilter)
+        {
+            staticData.ShufflePositions();
+            ref EcsEntity cardEntity = ref closedFilter.GetEntity(i);
+            cardEntity.Del<ClosedToRemixCard>();
+            cardEntity.Get<MovementSpeed>();
+            cardEntity.Get<RemixingCard>();
+        }
+    }
+
+    private void RotateCards()
+    {
+        foreach (int i in rotationFilter)
+        {
+            ref EcsEntity card = ref rotationFilter.GetEntity(i);
+            float speed = rotationFilter.Get1(i).Speed;
             int cardId = card.Get<Card>().CardId;
             ref Body body = ref card.Get<Body>();
             RectTransform rt = body.ObjRt;
@@ -52,16 +62,17 @@ sealed class CardRotator : IEcsRunSystem, IEcsInitSystem
                 Debug.Log("finished");
                 rt.eulerAngles = new Vector3(0, body.FinalYAngle, 0);
                 card.Del<RotationSpeed>();
-                card.Get<FinishedRotatingMarker>();
-                if (card.Has<OpenedMarker>())
+                if (card.Has<ClosingCard>())
                 {
-                    card.Del<OpenedMarker>();
+                    card.Del<ClosingCard>();
+                    card.Get<ClosedToRemixCard>();
                     body.FinalYAngle = 0;
                 }
-                else
+                else if (card.Has<OpeningCard>())
                 {
                     body.FinalYAngle = 180;
-                    card.Get<OpenedMarker>();
+                    card.Get<OpenedCard>();
+                    card.Del<OpeningCard>();
                 }
             }
         }

@@ -8,7 +8,10 @@ sealed class MouseClick : IEcsRunSystem, IEcsInitSystem
 {
     private EcsWorld world = null;
     private PointerEventData pointerEventData;
-    private EcsFilter<CorrectCardMarker> cardFilter;
+    private EcsFilter<CorrectCard> correctCardFilter;
+    private EcsFilter<ClosedToChooseCard> closedCardFilter;
+    private EcsFilter<Card> cardFilter;
+    private EcsFilter<OpenedCard> openedCardFilter;
     private EcsFilter<Body> bodyFilter;
     private GraphicRaycaster raycaster;
     private EventSystem eventSystem;
@@ -29,7 +32,6 @@ sealed class MouseClick : IEcsRunSystem, IEcsInitSystem
     {
         if (Input.GetMouseButtonDown(0))
         {
-            Debug.Log("CLICK");
             pointerEventData = new PointerEventData(eventSystem);
 
             pointerEventData.position = Input.mousePosition;
@@ -49,17 +51,34 @@ sealed class MouseClick : IEcsRunSystem, IEcsInitSystem
         }
     }
 
-    private void CheckClick(GameObject card)
+    private void CheckClick(GameObject cardObj)
     {
-        switch (staticData.CurrentState)
+        if (!openedCardFilter.IsEmpty())
         {
-            case StaticData.CardsState.Open:
-                staticData.CurrentState = StaticData.CardsState.Closing;
-                break;
+            CloseCards();
+        }
+        if (!closedCardFilter.IsEmpty())
+        {
+            CheckCorrectOpen();
+        }
+    }
 
-            case StaticData.CardsState.ClosedToChoose:
-                CheckCorrectOpen();
-                break;
+    private void CloseCards()
+    {
+        foreach (int i in cardFilter)
+        {
+            ref EcsEntity cardEntity = ref cardFilter.GetEntity(i);
+            if (cardEntity.Has<OpenedCard>())
+            {
+                cardEntity.Del<OpenedCard>();
+                cardEntity.Get<ClosingCard>();
+                cardEntity.Get<RotationSpeed>();
+            }
+            else
+            {
+                cardEntity.Del<ClosedToChooseCard>();
+                cardEntity.Get<ClosedToRemixCard>();
+            }
         }
     }
 
@@ -74,15 +93,16 @@ sealed class MouseClick : IEcsRunSystem, IEcsInitSystem
             Debug.Log($"Incorrect {results[0].gameObject.name} != {correctCardGO.name}");
         }
 
-        foreach (int i in bodyFilter)
+        foreach (int i in closedCardFilter)
         {
             ref EcsEntity card = ref bodyFilter.GetEntity(i);
             ref Body body = ref bodyFilter.Get1(i);
             if (body.ObjRt.gameObject == results[0].gameObject)
             {
+                card.Del<ClosedToChooseCard>();
+                card.Get<OpeningCard>();
                 card.Get<RotationSpeed>();
             }
         }
-        staticData.CurrentState = StaticData.CardsState.Opening;
     }
 }

@@ -25,7 +25,7 @@ sealed class EcsStartup : MonoBehaviour
 #endif
         InitSystems.Add(new CardsInit()).Inject(staticData).Init();
 
-        UpdateSystems.Add(new MouseClick()).Add(new SceneControl()).Inject(staticData).Init();
+        UpdateSystems.Add(new MouseClick()).Inject(staticData).Init();
 
         FixedUpdateSystems.Add(new CardRotator()).Add(new CardMoving()).Inject(staticData).Init();
 

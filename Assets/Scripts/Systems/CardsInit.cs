@@ -15,11 +15,11 @@ sealed class CardsInit : IEcsInitSystem
             card.CardId = i;
             ref var cardRT = ref cardEntity.Get<Body>();
             cardRT.ObjRt = staticData.cards[i];
+            cardEntity.Get<OpenedCard>();
             if (i == 0)
             {
-                cardEntity.Get<CorrectCardMarker>();
+                cardEntity.Get<CorrectCard>();
             }
-            cardEntity.Get<OpenedMarker>();
         }
     }
 }
