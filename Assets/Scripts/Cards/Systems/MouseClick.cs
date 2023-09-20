@@ -19,13 +19,11 @@ sealed class MouseClick : IEcsRunSystem, IEcsInitSystem
     private Ray ray;
     private RaycastHit hit;
     private StaticData staticData;
-    private GameObject correctCardGO;
+
     private EcsEntity gameManager;
 
     public void Init()
     {
-        correctCardGO = correctCardFilter.GetEntity(0).Get<Body>().objTransform.gameObject;
-
         gameManager = world.NewEntity();
         gameManager.Get<Header>();
     }
@@ -66,6 +64,10 @@ sealed class MouseClick : IEcsRunSystem, IEcsInitSystem
     {
         foreach (int i in cardFilter)
         {
+            if (PlayerPrefs.GetInt("Sound", 1) == 1)
+            {
+                AudioSource.PlayClipAtPoint(staticData.rotateSound, Vector3.zero, 1);
+            }
             ref EcsEntity cardEntity = ref cardFilter.GetEntity(i);
             if (cardEntity.Has<OpenedCard>())
             {
@@ -83,29 +85,32 @@ sealed class MouseClick : IEcsRunSystem, IEcsInitSystem
 
     private void CheckCorrectOpen()
     {
-        if (PlayerPrefs.GetInt("Sound", 1) == 1)
-        {
-            AudioSource.PlayClipAtPoint(staticData.rotateSound, Vector3.zero, 1);
-        }
-        if (hit.collider.gameObject == correctCardGO)
-        {
-            scoreUpdaterFilter.GetEntity(0).Get<UpdateScoresMarker>();
-            if (PlayerPrefs.GetInt("Sound", 1) == 1)
-            {
-                AudioSource.PlayClipAtPoint(staticData.winSound, Vector3.zero, 1);
-            }
-        }
-        else
-        {
-            gameManager.Get<EndGameMarker>();
-        }
-
         foreach (int i in closedCardFilter)
         {
             ref EcsEntity card = ref bodyFilter.GetEntity(i);
             ref Body body = ref bodyFilter.Get1(i);
-            if (body.objTransform.gameObject == hit.collider.gameObject)
+            if (hit.collider.gameObject == body.objTransform.gameObject)
             {
+                if (card.Has<ClosedToChooseCard>())
+                {
+                    if (PlayerPrefs.GetInt("Sound", 1) == 1)
+                    {
+                        AudioSource.PlayClipAtPoint(staticData.rotateSound, Vector3.zero, 1);
+                    }
+                    if (card.Has<CorrectCard>())
+                    {
+                        scoreUpdaterFilter.GetEntity(0).Get<UpdateScoresMarker>();
+                        if (PlayerPrefs.GetInt("Sound", 1) == 1)
+                        {
+                            AudioSource.PlayClipAtPoint(staticData.winSound, Vector3.zero, 1);
+                        }
+                    }
+                    else
+                    {
+                        gameManager.Get<EndGameMarker>();
+                    }
+                }
+
                 card.Del<ClosedToChooseCard>();
                 card.Get<OpeningCard>();
                 card.Get<RotationSpeed>();
